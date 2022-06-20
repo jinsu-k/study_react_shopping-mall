@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import ProductItem from "../../components/item";
+import ProductItem from "../../components/product/item";
 import { GET_PRODUCTS, Products } from "../../graphql/products";
 import { graphqlFetcher, QueryKyes } from "../../queryClient";
 
