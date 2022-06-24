@@ -18,7 +18,7 @@ import resolvers from './resolvers';
     app,
     path: '/graphql',
     cors: {
-      origin: ['https://localhost:3000'],
+      origin: ['https://localhost:3000', 'https://studio.apollographql.com'],
       credentials: true,
     },
   })
