@@ -1,33 +1,16 @@
 {
   "name": "shopping-mall",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/jinsu-k/study_react_shopping-mall.git",
+  "author": "Jinsu <wlstn8738@naver.com>",
+  "license": "MIT",
   "private": true,
-  "version": "0.0.0",
+  "workspaces": [
+    "client",
+    "server"
+  ],
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@vitejs/plugin-react": "^1.3.0",
-    "graphql-request": "^4.3.0",
-    "graphql-tag": "^2.12.6",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "react-query": "^3.39.1",
-    "react-router-dom": "^6.3.0",
-    "recoil": "^0.7.3",
-    "uuid": "^8.3.2"
-  },
-  "devDependencies": {
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
-    "@types/uuid": "^8.3.4",
-    "msw": "^0.42.1",
-    "sass": "^1.52.3",
-    "typescript": "^4.6.3",
-    "vite": "^2.9.9"
-  },
-  "msw": {
-    "workerDirectory": "public"
+    "client": "yarn workspace client run dev"
   }
 }
