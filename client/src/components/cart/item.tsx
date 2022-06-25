@@ -4,7 +4,7 @@ import { UPDATE_CART, CartType, DELETE_CART } from "../../graphql/cart";
 import { getClient, graphqlFetcher, QueryKyes } from "../../queryClient";
 import ItemData from "./itemData";
 
-const CartItem = ({ id, imageUrl, price, title, amount} : CartType, ref: ForwardedRef<HTMLInputElement>) => {
+const CartItem = ({ id, product: { imageUrl, price, title }, amount} : CartType, ref: ForwardedRef<HTMLInputElement>) => {
   const queryClient = getClient();
   const { mutate: updateCart } = useMutation(({ id, amount }: {id: string, amount: number}) => 
     graphqlFetcher(UPDATE_CART, { id, amount }),
@@ -12,24 +12,27 @@ const CartItem = ({ id, imageUrl, price, title, amount} : CartType, ref: Forward
       // 뮤테이트전에 view에서 낙관적으로 업데이트를 진행하고
       onMutate: async ({ id, amount }) => {
         await queryClient.cancelQueries(QueryKyes.CART);
-        const prevCart = queryClient.getQueryData<{[key: string]: CartType}>(QueryKyes.CART);
-        if(!prevCart?.[id]) return prevCart;
+        const { cart: prevCart } = queryClient.getQueryData<{ cart: CartType[] }>(QueryKyes.CART) || { cart: [] };
+        if(!prevCart) return null;
 
-        const newCart = {
-          ...(prevCart || {}),
-          [id]: { ...prevCart[id], amount }
-        }
-        queryClient.getQueryData(QueryKyes.CART, newCart)
-        return prevCart;
+        const targetIndex = prevCart.findIndex(cartItem => cartItem.id === id);
+        if(targetIndex === undefined || targetIndex < 0) return prevCart;
+
+        const newCart =  [...prevCart];
+        newCart.splice(targetIndex, 1, { ...newCart[targetIndex], amount })
+        queryClient.getQueryData(QueryKyes.CART, { cart: newCart })
+        return prevCart; 
       },
       // 실제 요청 후 성공하면 데이터를 업데이트함
-      onSuccess: newValue => { // item 하나에 대한 데이터
-        const prevCart = queryClient.getQueryData<{[key: string]: CartType}>(QueryKyes.CART);
-        const newCart = {
-          ...(prevCart || {}),
-          [id]: newValue,
-        }
-        queryClient.setQueryData(QueryKyes.CART, newCart); // Cart 전체 데이터
+      onSuccess: updateCart => { // item 하나에 대한 데이터
+        const { cart: prevCart } = queryClient.getQueryData<{ cart: CartType[] }>(QueryKyes.CART) || { cart: [] };
+        const targetIndex = prevCart?.findIndex(cartItem => cartItem.id === updateCart.id);
+        if(!prevCart || targetIndex === undefined || targetIndex < 0) return
+
+        const newCart =  [...prevCart];
+        newCart.splice(targetIndex, 1, updateCart)
+        queryClient.getQueryData(QueryKyes.CART, { cart: newCart })
+        
       }
     }
   )

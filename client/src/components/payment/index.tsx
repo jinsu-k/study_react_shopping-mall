@@ -14,18 +14,21 @@ const Payment = () => {
   const navigate = useNavigate();
   const [checkedCartData, setCheckedCartData] = useRecoilState(checkedCartState);
   const [modalShown, toggleModal] = useState(false);
-  const { mutate: excutePay } = useMutation((payInfos: PaymentInfos) => graphqlFetcher(EXCUTE_PAY, payInfos))
+  const { mutate: excutePay } = useMutation((ids: PaymentInfos) => graphqlFetcher(EXCUTE_PAY, { ids }))
   
   const showModal = () => {
     toggleModal(true);
   };
 
   const proceed = () => {
-    const payInfos = checkedCartData.map(({ id }) => (id));
-    excutePay(payInfos);
-    setCheckedCartData([]);
-    alert('결제가 완료되었습니다.');
-    navigate('/products', { replace: true}); 
+    const ids = checkedCartData.map(({ id }) => (id));
+    excutePay(ids, {
+      onSuccess: () => {
+        setCheckedCartData([]);
+        alert('결제가 완료되었습니다.');
+        navigate('/products', { replace: true}); 
+      }
+    });
   }
 
   const cancel = () => {
