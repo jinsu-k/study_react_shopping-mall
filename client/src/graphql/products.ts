@@ -1,21 +1,21 @@
 import { gql } from 'graphql-tag';
 
 export type Product = {
-  id: string,
-  imageUrl: string,
-  price: number,
-  title: string,
-  description: string,
-  createAt: number,
-}
+  id: string;
+  imageUrl: string;
+  price: number;
+  title: string;
+  description: string;
+  createAt: number;
+};
 
 export type Products = {
-  products: Product[]
-}
+  products: Product[];
+};
 
 export const GET_PRODUCTS = gql`
-  query GET_PRODUCTS {
-    products {
+  query GET_PRODUCTS($cursor: ID) {
+    products(cursor: $cursor) {
       id
       imageUrl
       price
@@ -28,7 +28,7 @@ export const GET_PRODUCTS = gql`
 
 export const GET_PRODUCT = gql`
   query GET_PRODUCT($id: ID!) {
-    product (id: $id) {
+    product(id: $id) {
       id
       imageUrl
       price
@@ -38,5 +38,3 @@ export const GET_PRODUCT = gql`
     }
   }
 `;
-
-
